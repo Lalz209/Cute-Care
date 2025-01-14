@@ -1,0 +1,52 @@
+.sliding-text-bar {
+    background-color: #b3b296; 
+    justify-content: center;
+    font-size: 18px;
+    letter-spacing: 2px;
+    height: 50px;
+  }
+  
+  .text-container { 
+    position: relative;
+    height: 50px;
+    overflow: hidden; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  span{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sliding-text {
+    position: absolute;
+    transform: translateX(100vw); 
+    animation: slideInOut 10s ease-in-out forwards; 
+    font-family: 'times regular';
+    color: #f2eadd;
+  }
+
+  
+  @keyframes slideInOut {
+    0% {
+      transform: translateX(100vw); 
+    }
+    20% {
+      transform: translateX(0%); 
+    }
+    80% {
+      transform: translateX(0%); 
+    }
+    100% {
+      transform: translateX(-100vw); 
+    }
+  }
+  
+
+  .img-logo-nav{
+    padding-right: 10px;
+    height: 25px;
+  }

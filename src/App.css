@@ -1,4 +1,7 @@
-
+@font-face{
+    font-family: 'WillandGrace';
+    src: url('Fonts/WILLG___.TTF');
+}
 
  .app{
     overflow-x: hidden;
@@ -35,7 +38,6 @@
     flex-wrap: wrap;
     align-items: center;
     width: 100%;
-
 }
 
 .main-img-container{
@@ -56,7 +58,6 @@
     justify-content: center;
     align-items: center;
     gap: 40px;
-    
 }
 
 .img-p2{
@@ -72,9 +73,7 @@
     width: 290px;
 }
 
-h1{
-    font-family: 'Will&Grace';
-}
+
 
 .service-img-container{
     display: flex;
@@ -90,54 +89,39 @@ h1{
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    height: 600px;
-    border: solid 3px #a60d05;
+    gap: 40px;
     
 }
 
 .grid-wrapper {
-    overflow: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    height: 100%;
-    border: solid 3px #4400ff;
+    overflow: hidden;
     
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 2 columnas */
-    grid-template-rows: repeat(2, 1fr);
-    justify-content: center;
-    transition: transform .6s ease-in-out;
-   /* gap: 50px;
-    justify-items: center;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 0 auto;
-    border: solid 3px #38f100;*/ 
+    grid-template-columns: repeat(3); 
+    grid-template-rows: repeat(2, 460px);
+    gap: 40px;
+    transition: transform .5s ease-in-out; 
+    grid-template-areas: 
+        "a a a a a a a"
+        "b b b b b b ."; 
 }
 
 .grid-item {
-    
-    width: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: solid 3px #d9ff00;
-    height: 300px;
+    height: 46vh;
+    width: 28vw;
 
 }
 
 .grid-img {
-    max-width: 80%;
-    border: solid 3px #000000;
-    height: auto;
-    /*
-    object-fit: cover;
-    */  
+    height: 46vh;
+    width: 28vw;
+    box-sizing: border-box;
 }
 
 button{
@@ -156,4 +140,85 @@ button{
 }
 
 
+.promo-text-container{
+    color: #ffff;
+    display: flex;  
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 385px;
+    background-color: #b3b296;
+    font-family: 'WillandGrace';
+}
 
+.promo-text-img{
+    height: 100px;
+    padding-top: 35px;
+}
+
+.p-text{
+    font-size: 60px;
+    margin: 0;
+}
+
+/* opinion header */
+
+.opinions-header{
+    
+    background-color: #c29997;
+    margin: 0;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #f2eadd;
+    font-family: 'times regular';
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 5px;
+}
+
+.opinions-text{
+    margin: 0;
+    font-size: 35px;
+}
+
+/* opinion form */
+
+.opinions-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-weight: 500;
+}
+
+
+.opinion-header{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 60px;
+    margin-right: 60px;
+    font-size: 35px;
+    font-family: 'times regular';
+}
+
+.opinion{
+    font-family: 'times regular';
+    border-bottom: solid 1px gray;
+}
+
+.comment{
+    font-family: 'times regular';
+    font-size: 30px;
+    margin-left: 60px;
+
+}
+
+.used-services{
+    font-family: 'times regular';
+    font-size: 30px;
+    margin-left: 60px;
+    color: gray
+}

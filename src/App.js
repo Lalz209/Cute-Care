@@ -1,12 +1,42 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
 import SlidingTextBar from './components/SlidingTextBar';
+import axios from 'axios';
 
 function App() {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const itemsPerPage = 6;
-    const itemWidth = 400;
+    const itemsPerPage = 3;
+    const itemWidth = window.innerHeight * 0.28;
+    const [opinions, setOpinions] = useState([]);
+    const [name, setName] = useState('');
+    const [services, setServices] = useState('');
+    const [comment, setComment] = useState('');
+    const [filter, setFilter] = useState('');
 
+    useEffect(() => {
+      loadOpinions();
+      }, [filter]);
+
+
+    const loadOpinions = async () => {
+      const response = await axios.get('http://localhost:5000/opinions', {
+        params: { service:filter },
+        });
+        setOpinions(response.data);
+        };
+      
+      const submitOpinion = async (e) => {
+        e.preventDefault();
+        await axios.post('http://localhost:5000/opinions', {
+          name,
+          services,
+          comment,
+          });
+          setName('');
+          setServices([]);
+          setComment('');
+          loadOpinions();
+          };
 
     const gridItems = [
       'recurso 11.png', 'recurso 11.png', 'recurso 11.png', 
@@ -15,23 +45,13 @@ function App() {
       'recurso 11.png','recurso 11.png', 'recurso 11.png',
       'recurso 11.png'];
 
+      const availableServices = ['cavitacion1', 'cavitacion2',
+       'cavitacion3','cavitacion4','cavitacion5','cavitacion6',
+       'cavitacion7','cavitacion8','cavitacion9','cavitacion10',
+       'cavitacion11','cavitacion12','cavitacion13']
+
     const maxPages = Math.ceil(gridItems.length / itemsPerPage);
 
-    /*const visibleItems = gridItems.slice(
-      currentIndex * itemsPerPage,
-      (currentIndex + 1) * itemsPerPage
-    );*/
-  
-    /*useEffect(() => {
-      const grid = document.querySelector('.grid');
-      const offset = -(currentIndex * itemsPerPage * itemWidth);
-      if (grid) {
-        grid.style.width = `${gridItems.length * itemWidth}px`;
-        grid.style.transform = `translateX(${offset}px)`;
-
-      }
-    }, [currentIndex, itemsPerPage, itemWidth, gridItems.length]);*/
-  
     const handleNext = () => {
       if (currentIndex < maxPages - 1) {
         setCurrentIndex(currentIndex + 1);
@@ -96,7 +116,73 @@ function App() {
           <img className="btn-img" src="flecha de.png" alt="Right arrow" />
         </button>
       </div>
-      
+
+      {/* promo announcement */}
+
+      <div className='promo-text-container'>
+        <p className='p-text'>promos & paquetes</p>
+        <p className='p-text'>diferentes cada mes especiales para ti</p>
+        <img className='promo-text-img' src='isotipo.png' alt='promo'/>
+      </div>
+
+                { /* opinions header */}
+      <div className='opinions-header'>
+        <p className='opinions-text'>Opiniones de clientes</p>
+      </div>
+ 
+          {/* opinions container */}
+
+      <div>
+        <h3>Filtrar por servicio</h3>
+        <select multiple value={filter} onChange={(e) => setFilter([...e.target.selectedOptions].map((option) => option.value))}>
+          <option value=''>Todos</option>
+          {availableServices.map((service) => (
+          <option key={service} value={service}>
+            {service}
+          </option>
+          ))}
+        </select>
+      </div>
+
+
+      <div className='opinions-container'>
+        {opinions.map((opinion) => (
+          <div className='opinion' key={opinion._id}>
+            <div className='opinion-header'>
+              <h4 className='name'>{opinion.name}</h4>
+              <p>{new Date(opinion.date).toLocaleDateString()}</p>
+            </div>
+            <p className='comment'>{opinion.comment}</p>
+            <p className='used-services'>Servicios: {opinion.services.join(', ')}</p>
+          </div>
+        ))}
+      </div>
+
+             {/* form container */}
+      <div className='form-container'>
+        <form onSubmit={submitOpinion}>
+          <input
+            type='text'
+            placeholder='Nombre'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <select  multiple value={services} onChange={(e) => setServices([...e.target.selectedOptions].map((option) => option.value))}>
+            <option value=''>Seleccione un servicio</option>
+              {availableServices.map((service) => (
+                <option key={service} value={service}>
+                  {service}
+                  </option> 
+                ))}
+          </select>
+                <textarea
+                  placeholder='Comentario'
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  />
+                  <button type='submit'>Enviar</button>
+        </form>
+      </div>
     </div>
   );
 }

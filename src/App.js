@@ -1,17 +1,21 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
 import SlidingTextBar from './components/SlidingTextBar';
+import Popup from './components/popup';
 import axios from 'axios';
+import { gridItems, availableServices, descriptions } from './data';
 
 function App() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const itemsPerPage = 3;
-    const itemWidth = window.innerHeight * 0.28;
+    const itemWidth = document.querySelector('.grid-item')?.offsetWidth || 0;
     const [opinions, setOpinions] = useState([]);
     const [name, setName] = useState('');
-    const [services, setServices] = useState('');
+    const [services, setServices] = useState([]);
     const [comment, setComment] = useState('');
     const [filter, setFilter] = useState('');
+    const [errors, setErrors] = useState({});
+    const [isCommentsPopupOpen, setIsCommentsPopupOpen] = useState(false);
 
     useEffect(() => {
       loadOpinions();
@@ -20,36 +24,40 @@ function App() {
 
     const loadOpinions = async () => {
       const response = await axios.get('http://localhost:5000/opinions', {
-        params: { service:filter },
+        params: { services:filter },
         });
         setOpinions(response.data);
         };
+
+    
       
       const submitOpinion = async (e) => {
         e.preventDefault();
-        await axios.post('http://localhost:5000/opinions', {
-          name,
-          services,
-          comment,
-          });
-          setName('');
-          setServices([]);
-          setComment('');
-          loadOpinions();
-          };
+        setErrors({});
 
-    const gridItems = [
-      'recurso 11.png', 'recurso 11.png', 'recurso 11.png', 
-      'recurso 11.png', 'recurso 11.png', 'recurso 11.png', 
-      'recurso 11.png', 'recurso 11.png', 'recurso 11.png',
-      'recurso 11.png','recurso 11.png', 'recurso 11.png',
-      'recurso 11.png'];
+        try{
+          await axios.post('http://localhost:5000/opinions', {
+            name,
+            services,
+            comment,
+            });
 
-      const availableServices = ['cavitacion1', 'cavitacion2',
-       'cavitacion3','cavitacion4','cavitacion5','cavitacion6',
-       'cavitacion7','cavitacion8','cavitacion9','cavitacion10',
-       'cavitacion11','cavitacion12','cavitacion13']
+            setName('');
+            setServices([]);
+            setComment('');
+            setIsCommentsPopupOpen(false);
+            loadOpinions();
+            } catch(error) {
+              if (error.response && error .response.status === 400) {
+                const { data } = error.response;
+                setErrors({...errors, ...data });
+                }
+            }
+            };
 
+
+
+  
     const maxPages = Math.ceil(gridItems.length / itemsPerPage);
 
     const handleNext = () => {
@@ -95,9 +103,11 @@ function App() {
           {/*'Grid Container'*/}
 
           <div className="grid-container">
-        <button className="nav-btn-left" onClick={handlePrev}>
-          <img className="btn-img" src="felcha iz.png" alt="Left arrow" />
-        </button>
+          <div className="arrow-btn">
+            <button className="nav-btn-left" onClick={handlePrev}>
+              <img className="btn-img" src="felcha iz.png" alt="Left arrow" />
+            </button>
+          </div>
         <div className="grid-wrapper">
           <div
             className="grid"
@@ -107,14 +117,20 @@ function App() {
           >
             {gridItems.map((src, index) => (
               <div className="grid-item" key={index}>
-                <img className="grid-img" src={src} alt={`img ${index + 1}`} />
+                <div className='grid-item-content'>
+                  <img className="grid-img" src={src} alt={`img ${index + 1}`} />
+                  <h2 className="grid-title">{availableServices[index]}</h2>
+                  <h4 className='grid-description'>{descriptions[index]}</h4>
+                </div>
               </div>
             ))}
           </div>
         </div>
-        <button className="nav-btn-right" onClick={handleNext}>
-          <img className="btn-img" src="flecha de.png" alt="Right arrow" />
-        </button>
+        <div className="arrow-btn">
+          <button className="nav-btn-right" onClick={handleNext}>
+            <img className="btn-img" src="flecha de.png" alt="Right arrow" />
+          </button>
+        </div>
       </div>
 
       {/* promo announcement */}
@@ -122,7 +138,7 @@ function App() {
       <div className='promo-text-container'>
         <p className='p-text'>promos & paquetes</p>
         <p className='p-text'>diferentes cada mes especiales para ti</p>
-        <img className='promo-text-img' src='isotipo.png' alt='promo'/>
+        <img className='promo-text-img' src='isotipo b.png' alt='promo'/>
       </div>
 
                 { /* opinions header */}
@@ -130,20 +146,21 @@ function App() {
         <p className='opinions-text'>Opiniones de clientes</p>
       </div>
  
-          {/* opinions container */}
+          {/* Filter opinions */}
 
-      <div>
-        <h3>Filtrar por servicio</h3>
+        <div>
+               
         <select multiple value={filter} onChange={(e) => setFilter([...e.target.selectedOptions].map((option) => option.value))}>
           <option value=''>Todos</option>
-          {availableServices.map((service) => (
-          <option key={service} value={service}>
-            {service}
+          {availableServices.map((services) => (
+          <option key={services} value={services}>
+            {services}
           </option>
           ))}
         </select>
       </div>
 
+            {/* opinions container */}
 
       <div className='opinions-container'>
         {opinions.map((opinion) => (
@@ -159,30 +176,74 @@ function App() {
       </div>
 
              {/* form container */}
-      <div className='form-container'>
-        <form onSubmit={submitOpinion}>
-          <input
-            type='text'
-            placeholder='Nombre'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <select  multiple value={services} onChange={(e) => setServices([...e.target.selectedOptions].map((option) => option.value))}>
-            <option value=''>Seleccione un servicio</option>
-              {availableServices.map((service) => (
-                <option key={service} value={service}>
-                  {service}
-                  </option> 
-                ))}
-          </select>
-                <textarea
-                  placeholder='Comentario'
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  />
-                  <button type='submit'>Enviar</button>
-        </form>
+      <div className='btn-form'>
+      <button type='button' onClick={() => setIsCommentsPopupOpen(true)}>Escribe una opinión</button> 
       </div>
+      <div className='form-container'>
+      <Popup isOpen={isCommentsPopupOpen} onClose={() => setIsCommentsPopupOpen(false)}>
+        <form onSubmit={submitOpinion}>
+          <div className='comment-form'>
+
+            <div className='name-form'>
+              <input
+              className='input-name'
+                type='text'
+                placeholder='Nombre'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              {errors.error === 'Por favor, ingrese un nombre.' && <p className='error-message'>{errors.error}</p>}
+            </div>
+
+            <div className='services-form'>
+              <p>Seleccione uno o más servicios:</p>
+              <div className='services-boxes'>
+              {availableServices.map((service) => (
+                <label key={service} className="checkbox-label">
+                  <input
+                  className='box-option'
+                    type="checkbox"
+                    value={service}
+                    checked={services.includes(service)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setServices([...services, service]);
+                      } else {
+                        setServices(services.filter((s) => s !== service));
+                      }
+                    }}
+                  />
+                  {service}
+                  
+                </label>
+                
+              ))}
+              </div>
+              {errors.error === 'Por favor introduce un servicio.' && (
+                <p className="error-message">{errors.error}</p>
+              )}
+            </div>
+
+            <div className='comment-form'>
+              <textarea
+                placeholder='Comentario'
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                />
+                 {errors.error === 'Por favor introduce un comentario.' && (
+                  <p className="error-message">{errors.error}</p>
+                  )}
+                <button type='submit'>Enviar</button>  
+              
+            </div>
+          </div>      
+        </form>
+        </Popup>
+    </div>
+    <div className='footer'>
+      <p>2025 - ©Todos los derechos reservados</p>
+    </div>
+      
     </div>
   );
 }

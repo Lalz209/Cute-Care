@@ -13,7 +13,7 @@ function App() {
     const [name, setName] = useState('');
     const [services, setServices] = useState([]);
     const [comment, setComment] = useState('');
-    const [filter, setFilter] = useState('');
+    const [filter, setFilter] = useState([]);
     const [errors, setErrors] = useState({});
     const [isCommentsPopupOpen, setIsCommentsPopupOpen] = useState(false);
 
@@ -24,13 +24,12 @@ function App() {
 
     const loadOpinions = async () => {
       const response = await axios.get('http://localhost:5000/opinions', {
-        params: { services:filter },
+        params: { services: filter.join(',') },
         });
         setOpinions(response.data);
         };
 
-    
-      
+        
       const submitOpinion = async (e) => {
         e.preventDefault();
         setErrors({});
@@ -55,10 +54,7 @@ function App() {
             }
             };
 
-
-
-  
-    const maxPages = Math.ceil(gridItems.length / itemsPerPage);
+    const maxPages = Math.ceil(itemsPerPage);
 
     const handleNext = () => {
       if (currentIndex < maxPages - 1) {
@@ -75,13 +71,15 @@ function App() {
   return (
     <div className="App">
       <div className='nav'>
-        <div className='logo-nav'>
-          <img className='img-logo-nav' src='recurso 5.png' alt='logo'/>
-        </div>
-        <div className='nav-social-media'>
-          <a target="_blank" href='https://wa.me/523310684078?text=Hola!%20Me%20interesa%20informaci%C3%B3n'><img className='social-img' src='recurso 6.png' alt='wpp'/></a>
-          <a target="_blank" className='social-img' href='https://www.instagram.com/cuteandcare.db/'><img className='social-img' src='recurso 7.png' alt='instagram'/></a>
-         
+        <div className='nav-contents'>
+          <div className='logo-nav'>
+            <img className='img-logo-nav' src='recurso 5.png' alt='logo'/>
+          </div>
+          <div className='nav-social-media'>
+            <a target="_blank" href='https://wa.me/523310684078?text=Hola!%20Me%20interesa%20informaci%C3%B3n'><img className='social-img' src='recurso 6.png' alt='wpp'/></a>
+            <a target="_blank" className='social-img' href='https://www.instagram.com/cuteandcare.db/'><img className='social-img' src='recurso 7.png' alt='instagram'/></a>
+          
+          </div>
         </div>
       </div>
       <div className='header'>
@@ -95,6 +93,7 @@ function App() {
       </div>
       <div>
         <SlidingTextBar />
+        
       </div>
       <div className='service-img-container'>
         <img className='Service-img' src='recurso 10.png' alt='service'/>
@@ -118,9 +117,15 @@ function App() {
             {gridItems.map((src, index) => (
               <div className="grid-item" key={index}>
                 <div className='grid-item-content'>
-                  <img className="grid-img" src={src} alt={`img ${index + 1}`} />
-                  <h2 className="grid-title">{availableServices[index]}</h2>
-                  <h4 className='grid-description'>{descriptions[index]}</h4>
+                  <div className='grid-item-img'>
+                    <img className="grid-img" src={src} alt={`img ${index + 1}`} />
+                  </div>
+                  <div className='grid-item-title'>
+                    <h2 className="grid-title">{availableServices[index]}</h2>
+                  </div>
+                  <div className='grid-item-description'>
+                    <h4 className='grid-description'>{descriptions[index]}</h4>
+                  </div>
                 </div>
               </div>
             ))}
@@ -134,6 +139,7 @@ function App() {
       </div>
 
       {/* promo announcement */}
+      
 
       <div className='promo-text-container'>
         <p className='p-text'>promos & paquetes</p>
@@ -150,7 +156,7 @@ function App() {
 
         <div>
                
-        <select multiple value={filter} onChange={(e) => setFilter([...e.target.selectedOptions].map((option) => option.value))}>
+        <select value={filter} onChange={(e) => setFilter([...e.target.selectedOptions].map((option) => option.value))}>
           <option value=''>Todos</option>
           {availableServices.map((services) => (
           <option key={services} value={services}>
@@ -177,7 +183,8 @@ function App() {
 
              {/* form container */}
       <div className='btn-form'>
-      <button type='button' onClick={() => setIsCommentsPopupOpen(true)}>Escribe una opinión</button> 
+      <button className='btn-c' type='button' onClick={() => setIsCommentsPopupOpen(true)}><img  className='final-pictures' src='opinion.png' alt='Boton para hacer comentario'/></button> 
+      <a target="_blank" href='https://wa.me/523310684078?text=Hola!%20Me%20interesa%20informaci%C3%B3n'><img  className='final-pictures' src='agenda cita.png' alt='wpp'/></a>
       </div>
       <div className='form-container'>
       <Popup isOpen={isCommentsPopupOpen} onClose={() => setIsCommentsPopupOpen(false)}>

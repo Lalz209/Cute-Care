@@ -154,10 +154,10 @@ function App() {
  
           {/* Filter opinions */}
 
-        <div>
+        <div className='filter-btn-container'>
                
         <select value={filter} onChange={(e) => setFilter([...e.target.selectedOptions].map((option) => option.value))}>
-          <option value=''>Todos</option>
+          <option value=''>Filtros</option>
           {availableServices.map((services) => (
           <option key={services} value={services}>
             {services}
@@ -173,7 +173,7 @@ function App() {
           <div className='opinion' key={opinion._id}>
             <div className='opinion-header'>
               <h4 className='name'>{opinion.name}</h4>
-              <p>{new Date(opinion.date).toLocaleDateString()}</p>
+              <p className='date'>{new Date(opinion.date).toLocaleDateString()}</p>
             </div>
             <p className='comment'>{opinion.comment}</p>
             <p className='used-services'>Servicios: {opinion.services.join(', ')}</p>
@@ -190,12 +190,11 @@ function App() {
       <Popup isOpen={isCommentsPopupOpen} onClose={() => setIsCommentsPopupOpen(false)}>
         <form onSubmit={submitOpinion}>
           <div className='comment-form'>
-
+            <h3 className='popup-name-h'>Nombre</h3>
             <div className='name-form'>
               <input
               className='input-name'
                 type='text'
-                placeholder='Nombre'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -203,7 +202,7 @@ function App() {
             </div>
 
             <div className='services-form'>
-              <p>Seleccione uno o más servicios:</p>
+              <p className='serv-form'>Servicios contratados</p>
               <div className='services-boxes'>
               {availableServices.map((service) => (
                 <label key={service} className="checkbox-label">
@@ -220,7 +219,8 @@ function App() {
                       }
                     }}
                   />
-                  {service}
+                  <span className="checkbox-text">{service}</span>
+                  
                   
                 </label>
                 
@@ -231,16 +231,17 @@ function App() {
               )}
             </div>
 
-            <div className='comment-form'>
+            <div className='commenttxt-form'>
+              <h3 className='tell-opinion'>Cuéntanos tu opinión</h3>
               <textarea
-                placeholder='Comentario'
+              className='textarea'
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 />
                  {errors.error === 'Por favor introduce un comentario.' && (
                   <p className="error-message">{errors.error}</p>
                   )}
-                <button type='submit'>Enviar</button>  
+                <button className='submit-btn' type='submit'>Enviar</button>  
               
             </div>
           </div>      
@@ -248,7 +249,7 @@ function App() {
         </Popup>
     </div>
     <div className='footer'>
-      <p>2025 - ©Todos los derechos reservados</p>
+      <p>© COPYTIGHT, 2025 Cute and Care DESARROLLADO Matcha Studio / Lalz</p>
     </div>
       
     </div>

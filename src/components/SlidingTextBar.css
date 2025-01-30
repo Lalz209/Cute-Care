@@ -50,3 +50,13 @@
     padding-right: 10px;
     height: 25px;
   }
+
+  @media (max-width: 600px){
+    span{
+      font-size: 0.9rem;
+    }
+
+    .sliding-text {
+      font-family: 'times regular';
+    }
+  }

@@ -10,7 +10,7 @@ const SlidingTextBar = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % texts.length);
-    }, 10000); 
+    }, 7000); 
 
     return () => clearInterval(interval);
   }, [texts.length]);

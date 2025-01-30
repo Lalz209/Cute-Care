@@ -14,14 +14,13 @@
   .popup-content {
     background: #fff;
     padding: 20px;
-    border-radius: 10px;
-    width: 60vw;
-    height: 60vh;
+    width: 70vw;
+    height: 80vh;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    font-family: 'Times New Roman', Times, serif;
   }
   
   .popup-close-btn {
@@ -35,3 +34,10 @@
     cursor: pointer;
   }
   
+
+  @media (max-width: 600px){
+    .popup-content {
+      width: 80vw;
+      height: 90vh;
+    }
+  }

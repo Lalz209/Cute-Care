@@ -16,43 +16,149 @@ function App() {
     const [filter, setFilter] = useState([]);
     const [errors, setErrors] = useState({});
     const [isCommentsPopupOpen, setIsCommentsPopupOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-      loadOpinions();
-      }, [filter]);
+      loadOpinions(currentPage);
+      }, [filter, currentPage]);
 
 
-    const loadOpinions = async () => {
+    const loadOpinions = async (page) => {
+
+      try {
       const response = await axios.get('http://localhost:5000/opinions', {
-        params: { services: filter.join(',') },
+        params: { services: filter.join(','), page, limit:5 },
         });
-        setOpinions(response.data);
-        };
+        setOpinions(response.data.opinions);
+        setTotalPages(response.data.totalPages);
+        
+      } catch (error) {
+        console.error('error loading opinions', error);
+        }
+      }
+      
+    const handlePageChange = (page) => {
+      setCurrentPage(page);
+    };
+
+    const renderPagination = () => {
+      const pages = [];
+      const maxPagesToShow = 5;
+  
+      // Si hay menos de 2 páginas, no mostrar paginación
+      if (totalPages < 2) {
+          return null;
+      }
+  
+      // Botón de "Anterior"
+      if (currentPage > 1) {
+          pages.push(
+              <button className='pag-arrows-btn' key="prev" onClick={() => handlePageChange(currentPage - 1)}>
+                  <img class = "pag-arrows"  src="paginacion derecha.png" alt="Previous" />
+              </button>
+          );
+      }
+  
+      // Mostrar todas las páginas si hay menos de 5
+      if (totalPages <= maxPagesToShow) {
+          for (let i = 1; i <= totalPages; i++) {
+              pages.push(
+                  <button
+                      key={i}
+                      onClick={() => handlePageChange(i)}
+                      disabled={i === currentPage}
+                  >
+                      {i}
+                  </button>
+              );
+          }
+      } else {
+          // Lógica para mostrar solo 5 páginas
+          const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
+          let startPage = Math.max(1, currentPage - halfMaxPagesToShow);
+          let endPage = Math.min(totalPages, currentPage + halfMaxPagesToShow);
+  
+          if (currentPage <= halfMaxPagesToShow) {
+              endPage = maxPagesToShow;
+          } else if (currentPage >= totalPages - halfMaxPagesToShow) {
+              startPage = totalPages - maxPagesToShow + 1;
+          }
+  
+          // Mostrar el primer número si no está en el rango
+          if (startPage > 1) {
+              pages.push(
+                  <button key={1} onClick={() => handlePageChange(1)}>
+                      {1}
+                  </button>
+              );
+              if (startPage > 2) {
+                  pages.push(<span className='ellipsis' key="ellipsis-start">...</span>);
+              }
+          }
+  
+          // Mostrar los números de página en el rango calculado
+          for (let i = startPage; i <= endPage; i++) {
+              pages.push(
+                  <button
+                      key={i}
+                      onClick={() => handlePageChange(i)}
+                      disabled={i === currentPage}
+                  >
+                      {i}
+                  </button>
+              );
+          }
+  
+          // Mostrar el último número si no está en el rango
+          if (endPage < totalPages) {
+              if (endPage < totalPages - 1) {
+                  pages.push(<span className='ellipsis' key="ellipsis-end">...</span>);
+              }
+              pages.push(
+                  <button key={totalPages} onClick={() => handlePageChange(totalPages)}>
+                      {totalPages}
+                  </button>
+              );
+          }
+      }
+  
+      
+      if (currentPage < totalPages) {
+          pages.push(
+              <button class = "pag-arrows-btn" key="next" onClick={() => handlePageChange(currentPage + 1)}>
+                  <img class = "pag-arrows" src="paginacion izq.png" alt="Next" />
+              </button>
+          );
+      }
+  
+      return pages;
+  };
 
         
-      const submitOpinion = async (e) => {
-        e.preventDefault();
-        setErrors({});
+    const submitOpinion = async (e) => {
+      e.preventDefault();
+      setErrors({});
 
-        try{
-          await axios.post('http://localhost:5000/opinions', {
-            name,
-            services,
-            comment,
-            });
+      try{
+        await axios.post('http://localhost:5000/opinions', {
+          name,
+          services,
+          comment,
+          });
 
-            setName('');
-            setServices([]);
-            setComment('');
-            setIsCommentsPopupOpen(false);
-            loadOpinions();
-            } catch(error) {
-              if (error.response && error .response.status === 400) {
-                const { data } = error.response;
-                setErrors({...errors, ...data });
-                }
-            }
-            };
+          setName('');
+          setServices([]);
+          setComment('');
+          setIsCommentsPopupOpen(false);
+          loadOpinions();
+          } catch(error) {
+            if (error.response && error .response.status === 400) {
+              const { data } = error.response;
+              setErrors({...errors, ...data });
+              }
+          }
+          };
 
     const maxPages = Math.ceil(itemsPerPage);
 
@@ -180,6 +286,10 @@ function App() {
           </div>
         ))}
       </div>
+      <div className='pagination'>
+        {renderPagination()}
+      </div>
+      
 
              {/* form container */}
       <div className='btn-form'>
@@ -248,10 +358,19 @@ function App() {
         </form>
         </Popup>
     </div>
+    <div className='bna-container'>
+      <div className='bna-title'>
+        <h2 className='bna-title-text'>Antes Y Despues</h2>
+      </div>
+      <div className='bna-imgs'>
+        <img className='bna-img' src='bna1.png' alt='bna'/>
+        <img className='bna-img' src='bna2.png' alt='bna'/>
+      </div>
+    </div>
     <div className='footer'>
       <p>© COPYTIGHT, 2025 Cute and Care DESARROLLADO Matcha Studio / Lalz</p>
     </div>
-      
+
     </div>
   );
 }

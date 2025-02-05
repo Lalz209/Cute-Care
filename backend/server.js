@@ -23,7 +23,6 @@ app.use(limiter);
 mongoose.connect('mongodb://localhost:27017/opinionsDB', {
     });
 
-
 const OpinionSchema = new mongoose.Schema({
     name: String,
     services: [String],

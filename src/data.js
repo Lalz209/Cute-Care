@@ -7,7 +7,7 @@ export  const gridItems = [
 
     export    const availableServices = ['Cavitacion', 'Criolipolisis', 
     'Dermapen', 'Ems', 'Enzimas', 'Hifu', 'Lipolaser', 
-    'Mesoterapia', 'Peptomas', 'Presoterapia', 
+    'Mesoterapia', 'Peptonas', 'Presoterapia', 
     'Radiofrecuencia', 'Vacuum', 'Vendas'];
 
 

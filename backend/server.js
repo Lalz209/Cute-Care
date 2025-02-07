@@ -1,11 +1,14 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const {availableServices} = require('../my-app/src/data');
+const {availableServices} = require('/data');
 const { check, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+
 
 
 const app = express();
@@ -16,12 +19,16 @@ app.use(helmet());
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 5
+    max: 100
 });
 app.use(limiter);
 
-mongoose.connect('mongodb://localhost:27017/opinionsDB', {
-    });
+mongoose.connect(process.env.MONGODB_URI, {
+    }).then(() => {
+    console.log('Connected to MongoDB');
+}).catch((error) => {
+    console.error('Error connecting to MongoDB:', error.message);
+});
 
 const OpinionSchema = new mongoose.Schema({
     name: String,
